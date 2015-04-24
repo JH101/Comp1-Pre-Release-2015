@@ -1,0 +1,518 @@
+# Skeleton Program code for the AQA COMP1 Summer 2015 examination
+# this code should be used in conjunction with the Preliminary Material
+# written by the AQA COMP1 Programmer Team
+# developed in the Python 3.4 programming environment
+
+BOARDDIMENSION = 8
+
+def surrender(WhoseTurn):
+  if WhoseTurn == "W":
+    print("White Surrendered. Black Wins")
+    print("")
+  else:
+    print("Black Surrendered. White Wins")
+    print("")
+  print("Returning to Menu")
+  print("")
+  GameOver = True
+  return GameOver
+
+def use_option(option):
+  if option == 1:
+    print("Not avaliable")
+    print("")
+    Quit = False
+    Surrender = False
+  if option == 2:
+    Quit = True
+    Surrender = False
+    print("Quitting to Menu")
+    print()
+  if option == 3:
+    Quit = False
+    Surrender = False
+    print("Returning to Game")
+    print()
+  if option == 4:
+    Surrender = True
+    Quit = True
+  return Quit, Surrender
+  
+def get_in_game_option():
+  valid = False
+  while valid == False:
+    option = int(input("Please select an option: "))
+    print("")
+    if option > 4 or option < 1:
+      print("Please try again ")
+      print("")
+    else:
+      valid = True
+      return option
+
+
+def display_in_game_menu():
+  print("")
+  print("Options")
+  print("")
+  print("1. Save Game")
+  print("2. Quit to Menu")
+  print("3. Return to Game")
+  print("4. Surrender")
+  print("")
+  
+def display_menu():
+  print("Main Menu")
+  print("")
+  print("1. Start new game")
+  print("2. Load exisitng game")
+  print("3. Play sample games")
+  print("4. View high scores")
+  print("5. Settings")
+  print("6. Quit program")
+  print("")
+
+def get_menu_selection():
+  valid = False
+  while valid == False:
+    decision = int(input("Please select an option: "))
+    print("")
+    if decision > 6 or decision < 1:
+      print("That is not a valid option, try again")
+      print("")
+    else:
+      vaild = True
+      return decision
+
+def make_selection(decision):
+  if decision == 1:
+    SampleGame = "N"
+    valid =  True
+    return SampleGame, valid
+  if decision == 2:
+    print("Not avaliable")
+    print("")
+  if decision ==  3:
+    SampleGame = "Y"
+    valid = True
+    return SampleGame, valid
+  if decision == 4:
+    print("Not avaliable")
+    print("")
+  if decision == 5:
+    print("Not avaliable")
+    print("")
+  if decision ==6:
+    print("Quiting game")
+    quit()
+  valid = False
+  SampleGame = None
+  return SampleGame, valid
+
+def GetPieceName(Piece):
+  if Piece == "WM":
+   pieceName = "White Marzaz Pani"
+  elif Piece == "WS":
+   pieceName = "White Sarrum"
+  elif Piece == "WN":
+   pieceName = "White Nabu"
+  elif Piece == "WE":
+   pieceName = "White Eltu"
+  elif Piece == "WG":
+   pieceName = "White Gisgigir"
+  elif Piece == "WR":
+   pieceName = "White Redum"
+  elif Piece == "BM":
+   pieceName = "Black Marzaz Pani"
+  elif Piece == "BS":
+   pieceName = "Black Sarrum"
+  elif Piece == "BN":
+   pieceName = "Black Nabu"
+  elif Piece == "BE":
+   pieceName = "Black Eltu"
+  elif Piece == "BG":
+   pieceName = "Black Gisgigir"
+  elif Piece == "BR":
+   pieceName = "Black Redum"
+  else:
+   pieceName = None 
+  return pieceName
+
+
+def ConfirmMove(StartSquare, FinishSquare):
+  StartStr = str(StartSquare)
+  FinishStr = str(FinishSquare)
+  print()
+  print("Move from Rank {0}, File {1} to Rank {2}, File {3}?".format(StartStr[0], StartStr[1], FinishStr[0], FinishStr[1]))
+  Confirm = input("Confirm move (Yes/No): ")
+  return Confirm.lower()[0]
+
+def CreateBoard():
+  Board = []
+  for Count in range(BOARDDIMENSION + 1):
+    Board.append([])
+    for Count2 in range(BOARDDIMENSION + 1):
+      Board[Count].append("  ")
+  return Board
+
+def DisplayWhoseTurnItIs(WhoseTurn):
+  if WhoseTurn == "W":
+    print("It is White's turn")
+    print()
+  else:
+    print("It is Black's turn")
+    print()
+
+def GetTypeOfGame():
+  try:
+    answers = ["yes", "y", "no", "n"]
+    valid = False
+    while valid == False:
+      TypeOfGame = input("Do you want to play the sample game (enter Y for Yes)? ")
+      TypeOfGame = TypeOfGame.lower()
+      if TypeOfGame in answers:
+        valid = True
+      else:
+        print("Please enter a correct value")
+    return TypeOfGame.lower()[0] 
+  except TypeError:
+        print("Please enter a correct value")
+
+  
+def DisplayWinner(WhoseTurn):
+  if WhoseTurn == "W":
+    print("Black's Sarrum has been captured.  White wins!")
+  else:
+    print("White's Sarrum has been captured.  Black wins!")
+
+def CheckIfGameWillBeWon(Board, FinishRank, FinishFile):
+  if Board[FinishRank][FinishFile][1] == "S":
+    return True
+  else:
+    return False
+
+def DisplayBoard(Board):
+  print()
+  for RankNo in range(1, BOARDDIMENSION + 1):
+    print("      {0}-".format("-"*3*BOARDDIMENSION))
+    print("R{0:<2}".format(RankNo), end="   ")
+    for FileNo in range(1, BOARDDIMENSION + 1):
+      
+      print("|" + Board[RankNo][FileNo], end="")
+    print("|")
+  print("      {0}-".format("-"*3*BOARDDIMENSION))
+  print()
+  print("       F1 F2 F3 F4 F5 F6 F7 F8")
+  print()
+  print()    
+
+def CheckRedumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, ColourOfPiece, count):
+  if count == 1 or count == 2:
+    CheckRedumMoveIsLegal = False
+    if ColourOfPiece == "W":
+      if FinishRank == StartRank - 2 or FinishRank == StartRank - 1:
+        if FinishFile == StartFile and Board[FinishRank][FinishFile] == "  ":
+          CheckRedumMoveIsLegal = True
+        elif abs(FinishFile - StartFile) == 2 and Board[FinishRank][FinishFile][0] == "B" or abs(FinishFile - StartFile) == 1 and Board[FinishRank][FinishFile][0] == "B":
+          CheckRedumMoveIsLegal = True
+    elif FinishRank == StartRank + 2 or FinishRank == StartRank + 1 :
+      if FinishFile == StartFile and Board[FinishRank][FinishFile] == "  ":
+        CheckRedumMoveIsLegal = True
+      elif abs(FinishFile - StartFile) == 2 and Board[FinishRank][FinishFile][0] == "W" or abs(FinishFile - StartFile) == 1 and Board[FinishRank][FinishFile][0] == "W":
+        CheckRedumMoveIsLegal = True
+  else:  
+    CheckRedumMoveIsLegal = False
+    if ColourOfPiece == "W":
+      if FinishRank == StartRank - 1:
+        if FinishFile == StartFile and Board[FinishRank][FinishFile] == "  ":
+          CheckRedumMoveIsLegal = True
+        elif abs(FinishFile - StartFile) == 1 and Board[FinishRank][FinishFile][0] == "B":
+          CheckRedumMoveIsLegal = True
+    elif FinishRank == StartRank + 1:
+      if FinishFile == StartFile and Board[FinishRank][FinishFile] == "  ":
+        CheckRedumMoveIsLegal = True
+      elif abs(FinishFile - StartFile) == 1 and Board[FinishRank][FinishFile][0] == "W":
+        CheckRedumMoveIsLegal = True
+  return CheckRedumMoveIsLegal
+
+def CheckSarrumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
+  CheckSarrumMoveIsLegal = False
+  if abs(FinishFile - StartFile) <= 1 and abs(FinishRank - StartRank) <= 1:
+    CheckSarrumMoveIsLegal = True
+  return CheckSarrumMoveIsLegal
+
+def CheckGisgigirMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
+  GisgigirMoveIsLegal = False
+  RankDifference = FinishRank - StartRank
+  FileDifference = FinishFile - StartFile
+  if RankDifference == 0:
+    if FileDifference >= 1:
+      GisgigirMoveIsLegal = True
+      for Count in range(1, FileDifference):
+        if Board[StartRank][StartFile + Count] != "  ":
+          GisgigirMoveIsLegal = False
+    elif FileDifference <= -1:
+      GisgigirMoveIsLegal = True
+      for Count in range(-1, FileDifference, -1):
+        if Board[StartRank][StartFile + Count] != "  ":
+          GisgigirMoveIsLegal = False
+  elif FileDifference == 0:
+    if RankDifference >= 1:
+      GisgigirMoveIsLegal = True
+      for Count in range(1, RankDifference):
+        if Board[StartRank + Count][StartFile] != "  ":
+          GisgigirMoveIsLegal = False
+    elif RankDifference <= -1:
+      GisgigirMoveIsLegal = True
+      for Count in range(-1, RankDifference, -1):
+        if Board[StartRank + Count][StartFile] != "  ":
+          GisgigirMoveIsLegal = False
+  return GisgigirMoveIsLegal
+
+def CheckNabuMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
+  CheckNabuMoveIsLegal = False
+  valid = [1, 2, 3, 4 , 5, 6, 7, 8, -1, -2, -3, -4, -5, -6, -7, -8]
+  if abs(FinishFile - StartFile) in valid and abs(FinishRank - StartRank) in valid:
+    CheckNabuMoveIsLegal = True
+  return CheckNabuMoveIsLegal
+
+def CheckMarzazPaniMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
+  CheckMarzazPaniMoveIsLegal = False
+  if (abs(FinishFile - StartFile) == 1 and abs(FinishRank - StartRank) == 0) or (abs(FinishFile - StartFile) == 0 and abs(FinishRank - StartRank) ==1) or (abs(FinishFile - StartFile) == 1 and abs(FinishRank - StartRank) == 1) :
+    CheckMarzazPaniMoveIsLegal = True
+  return CheckMarzazPaniMoveIsLegal
+
+def CheckEtluMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile):
+  CheckEtluMoveIsLegal = False
+  if (abs(FinishFile - StartFile) == 2 and abs(FinishRank - StartRank) == 1) or (abs(FinishFile - StartFile) == 1 and abs(FinishRank - StartRank) == 2):
+    CheckEtluMoveIsLegal = True
+  return CheckEtluMoveIsLegal
+
+def CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn, count):
+  try:
+    MoveIsLegal = True
+    if FinishRank < 1 or FinishRank > BOARDDIMENSION:
+      MoveIsLegal = False
+    elif FinishFile < 1 or FinishFile > BOARDDIMENSION:
+      MoveIsLegal = False
+    elif (FinishFile == StartFile) and (FinishRank == StartRank):
+      MoveIsLegal = False
+    else:
+      PieceType = Board[StartRank][StartFile][1]
+      PieceColour = Board[StartRank][StartFile][0]
+      if WhoseTurn == "W":
+        if PieceColour != "W":
+          MoveIsLegal = False
+        if Board[FinishRank][FinishFile][0] == "W":
+          MoveIsLegal = False
+      else:
+        if PieceColour != "B":
+          MoveIsLegal = False
+        if Board[FinishRank][FinishFile][0] == "B":
+          MoveIsLegal = False
+      if MoveIsLegal == True:
+        if PieceType == "R":
+          MoveIsLegal = CheckRedumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, PieceColour, count)
+        elif PieceType == "S":
+          MoveIsLegal = CheckSarrumMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile)
+        elif PieceType == "M":
+          MoveIsLegal = CheckMarzazPaniMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile)
+        elif PieceType == "G":
+          MoveIsLegal = CheckGisgigirMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile)
+        elif PieceType == "N":
+          MoveIsLegal = CheckNabuMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile)
+        elif PieceType == "E":
+          MoveIsLegal = CheckEtluMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile)
+    return MoveIsLegal
+  except IndexError:
+    MoveIsLegal = False
+    return MoveIsLegal
+    
+def InitialiseBoard(SampleGame, Board):
+  if SampleGame == "Y":
+    InitialiseSampleBoard(Board)
+  else:
+    InitialiseNewBoard(Board)
+
+def InitialiseSampleBoard(Board):
+  for RankNo in range(1, BOARDDIMENSION + 1):
+    for FileNo in range(1, BOARDDIMENSION + 1):
+      Board[RankNo][FileNo] = "  "
+  Board[1][2] = "BG"
+  Board[1][4] = "BS"
+  Board[1][8] = "WG"
+  Board[2][1] = "WR"
+  Board[3][1] = "WS"
+  Board[3][2] = "BE"
+  Board[3][8] = "BE"
+  Board[6][8] = "BR"
+
+
+def InitialiseNewBoard(Board):  
+  for RankNo in range(1, BOARDDIMENSION + 1):
+    for FileNo in range(1, BOARDDIMENSION + 1):
+      if RankNo == 2:
+        Board[RankNo][FileNo] = "BR"
+      elif RankNo == 7:
+        Board[RankNo][FileNo] = "WR"
+      elif RankNo == 1 or RankNo == 8:
+        if RankNo == 1:
+          Board[RankNo][FileNo] = "B"
+        if RankNo == 8:
+          Board[RankNo][FileNo] = "W"
+        if FileNo == 1 or FileNo == 8:
+          Board[RankNo][FileNo] = Board[RankNo][FileNo] + "G"
+        elif FileNo == 2 or FileNo == 7:
+          Board[RankNo][FileNo] = Board[RankNo][FileNo] + "E"
+        elif FileNo == 3 or FileNo == 6:
+          Board[RankNo][FileNo] = Board[RankNo][FileNo] + "N"
+        elif FileNo == 4:
+          Board[RankNo][FileNo] = Board[RankNo][FileNo] + "M"
+        elif FileNo == 5:
+          Board[RankNo][FileNo] = Board[RankNo][FileNo] + "S"
+      else:
+        Board[RankNo][FileNo] = "  "    
+                    
+def GetMove():
+  valid = False
+  while valid == False:
+    try:
+      StartSquare = int(input("Enter coordinates of square containing piece to move (file first) or type -1 to open the in game menu: "))
+      print()
+      if StartSquare == -1:
+        StartSquare = None
+        FinishSquare = None
+        return StartSquare, FinishSquare
+      elif len(str(StartSquare)) == 2:
+        valid = True 
+      else:
+        print("Please Provide a File and Rank for this move")
+        print()
+    except ValueError:
+      print("Please provide a Valid File AND Rank for this move")
+      print()
+  valid = False
+  while valid == False:
+    try:
+      FinishSquare = int(input("Enter coordinates of square to move piece to (file first) or type -1 to open the in game menuy: "))
+      print()
+      if FinishSquare == -1:
+        StartSquare = None
+        FinishSquare = None
+        return StartSquare, FinishSquare
+      elif len(str(FinishSquare)) == 2:
+        valid = True  
+        return StartSquare, FinishSquare
+      else:
+        print("Please provide a Valid File AND Rank for this move")
+        print()
+    except ValueError:
+      print("Please provide a Valid File AND Rank for this move")
+      print()
+  return StartSquare, FinishSquare
+    
+def MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn):
+  if WhoseTurn == "W" and FinishRank == 1 and Board[StartRank][StartFile][1] == "R":
+    Board[FinishRank][FinishFile] = "WM"
+    print()
+    PieceName1 = GetPieceName(Board[StartRank][StartFile])
+    PieceName2 = GetPieceName(Board[FinishRank][FinishFile])
+    if PieceName2 == None:
+      PieceName2 = ("F{0} R{1}".format(FinishFile, FinishRank))
+    print("{0} Takes {1}".format(PieceName1, PieceName2))
+    print("White Redum Promoted to Mazaz Pani")
+    Board[StartRank][StartFile] = "  "
+  elif WhoseTurn == "B" and FinishRank == 8 and Board[StartRank][StartFile][1] == "R":
+    Board[FinishRank][FinishFile] = "BM"
+    print()
+    PieceName1 = GetPieceName(Board[StartRank][StartFile])
+    PieceName2 = GetPieceName(Board[FinishRank][FinishFile])
+    if PieceName2 == None:
+      PieceName2 = ("F{0} R{1}".format(FinishFile, FinishRank))
+    print("{0} Takes {1}".format(PieceName1, PieceName2))
+    print("Black Redum, Promoted to Marzaz Pani.")
+    Board[StartRank][StartFile] = "  "
+  else:
+    print()
+    PieceName1 = GetPieceName(Board[StartRank][StartFile])
+    PieceName2 = GetPieceName(Board[FinishRank][FinishFile])
+    if PieceName2 == None:
+      PieceName2 = ("F{0} R{1}".format(FinishFile, FinishRank))
+    print("{0} Takes {1}".format(PieceName1, PieceName2))    
+    Board[FinishRank][FinishFile] = Board[StartRank][StartFile]
+    Board[StartRank][StartFile] = "  " 
+      
+def PlayGame():
+  Board = CreateBoard() #0th index not used
+  StartSquare = 0 
+  FinishSquare = 0
+  PlayAgain = "Y"
+  while PlayAgain == "Y":
+    valid = False
+    while valid == False:
+      display_menu()
+      decision = get_menu_selection()
+      SampleGame, valid = make_selection(decision)
+    WhoseTurn = "W"
+    GameOver = False
+    InitialiseBoard(SampleGame, Board)
+    count = 0
+    while not(GameOver):
+      count = count + 1
+      print(count)
+      Confirm = "n"
+      DisplayBoard(Board)
+      DisplayWhoseTurnItIs(WhoseTurn)
+      while Confirm == "n":
+        MoveIsLegal = False
+        while MoveIsLegal == False:
+          StartSquare, FinishSquare = GetMove()
+          if StartSquare == None or FinishSquare == None:
+            display_in_game_menu()
+            option = get_in_game_option()
+            Quit, Surrender = use_option(option)
+            if Surrender == True:
+              GameOver = surrender(WhoseTurn)
+              MoveIsLegal = True
+              Confirm = "y"
+              PlayAgain = "Y"
+            elif Quit == True:
+              MoveIsLegal = True
+              Confirm = "y"
+              PlayAgain = "Y"
+              GameOver = True
+          else:  
+            StartRank = StartSquare % 10
+            StartFile = StartSquare // 10
+            FinishRank = FinishSquare % 10
+            FinishFile = FinishSquare // 10
+            MoveIsLegal = CheckMoveIsLegal(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn, count)
+            if not(MoveIsLegal):
+              print("That is not a legal move - please try again")
+            elif MoveIsLegal  == True:
+              GameOver = CheckIfGameWillBeWon(Board, FinishRank, FinishFile)
+              Confirm = ConfirmMove(StartSquare, FinishSquare)
+              if Confirm == "y":
+                print("Move Confirmed")
+                MakeMove(Board, StartRank, StartFile, FinishRank, FinishFile, WhoseTurn)
+              if GameOver:
+                MoveIsLegal = True
+                DisplayWinner(WhoseTurn)
+                PlayAgain = input("Do you want to play again (enter Y for Yes)? ")
+                if ord(PlayAgain) >= 97 and ord(PlayAgain) <= 122:
+                  PlayAgain = chr(ord(PlayAgain) - 32)
+                  if PlayAgain == "N":
+                    print ("Quitting Game")
+              if WhoseTurn == "W":
+                WhoseTurn = "B"
+              else:
+                WhoseTurn = "W"
+          
+
+
+
+    
+    
+if __name__ == "__main__":
+  PlayGame()
+ 
